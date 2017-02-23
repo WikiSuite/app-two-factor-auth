@@ -13,6 +13,9 @@ $app['license'] = 'GPLv3';
 $app['license_core'] = 'LGPLv3';
 $app['description'] = lang('two_factor_auth_app_description');
 $app['priority'] = 9999;
+$app['tooltip'] = array(
+    lang('two_factor_auth_tooltip_tokens')
+);
 
 /////////////////////////////////////////////////////////////////////////////
 // App name and categories
@@ -42,6 +45,18 @@ $app['core_file_manifest'] = array(
         'group' => 'root',
         'config' => TRUE,
         'config_params' => 'noreplace',
+    ),
+    'app-two-factor-auth.cron' => array(
+        'target' => '/etc/cron.d/app-two-factor-auth',
+        'config' => TRUE,
+        'config_params' => 'noreplace',
+    ),
+);
+$app['core_directory_manifest'] = array(
+    '/var/clearos/framework/cache/t' => array(
+        'mode' => '0750',
+        'owner' => 'webconfig',
+        'group' => 'webconfig',
     ),
 );
 

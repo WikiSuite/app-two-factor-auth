@@ -120,6 +120,9 @@ class Settings extends ClearOS_Controller
                 $this->two_factor_auth->set_root_enabled($this->input->post('root_enabled'));
                 if ($this->input->post('root_enabled'))
                     $this->two_factor_auth->set_root_email($this->input->post('root_email'));
+                $this->two_factor_auth->set_verification_code_length($this->input->post('code_length'));
+                $this->two_factor_auth->set_verification_code_lifecycle($this->input->post('code_expire'));
+                $this->two_factor_auth->set_token_lifecycle($this->input->post('token_expire'));
                 //$this->two_factor_auth->set_email_allow_change($this->input->post('allow_email'));
 
                 $this->page->set_status_updated();
@@ -136,6 +139,12 @@ class Settings extends ClearOS_Controller
             $data['root_enabled'] = $this->two_factor_auth->get_root_enabled();
             $data['root_email'] = $this->two_factor_auth->get_root_email();
             $data['allow_email'] = $this->two_factor_auth->get_email_allow_change();
+            $data['code_length_options'] = $this->two_factor_auth->get_verification_code_length_options();
+            $data['code_length'] = $this->two_factor_auth->get_verification_code_length();
+            $data['code_expire_options'] = $this->two_factor_auth->get_verification_code_lifecycle_options();
+            $data['code_expire'] = $this->two_factor_auth->get_verification_code_lifecycle();
+            $data['token_expire_options'] = $this->two_factor_auth->get_token_lifecycle_options();
+            $data['token_expire'] = $this->two_factor_auth->get_token_lifecycle();
         } catch (Exception $e) {
             $this->page->view_exception($e);
             return;

@@ -1,0 +1,1 @@
+*/5 * * * * root /usr/clearos/apps/two_factor_auth/deploy/recycle_tokens > /dev/null

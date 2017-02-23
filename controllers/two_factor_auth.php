@@ -84,4 +84,66 @@ class Two_Factor_Auth extends ClearOS_Controller
 
         $this->page->view_form('mail/test', NULL, lang('mail_notification_test'));
     }
+
+    /**
+     * Two-factor Authentication verification.
+     *
+     * @param string $username username
+     * @param string $redirect redirect page after login, base64 encoded
+     *
+     * @return view
+     */
+
+    function verify($username, $redirect = NULL)
+    {
+        $this->load->helper('cookie');
+        $this->load->library('two_factor_auth/Two_Factor_Auth');
+
+        if ($username == NULL) {
+            redirect('base/session/login');
+            return;
+        }
+
+        // Protect two-factor authentication page
+        if (!$this->two_factor_auth->is_ready_2fa_verification())
+            redirect('base/session/login');
+
+        $page['type'] = MY_Page::TYPE_2FACTOR_AUTH;
+
+        $data = array(
+            'username' => $username,
+            'redirect' => $redirect,
+        );
+
+        // Set validation rules
+        //---------------------
+         
+        $this->form_validation->set_policy('code', 'two_factor_auth/Two_Factor_Auth', 'validate_verification_code');
+
+        $form_ok = $this->form_validation->run();
+
+        try {
+            if ($this->input->post('verify') && $form_ok) {
+                $code = $this->two_factor_auth->get_verification_code($username);
+                if ($this->input->post('code') == $code) {
+                    if ($this->input->post('redirect'))
+                        $redirect = $this->input->post('redirect');
+                    set_cookie($this->two_factor_auth->create_cookie($username));
+                    $post_redirect = is_null($redirect) ? '/base/index' : base64_decode(strtr($redirect, '-@_', '+/='));
+                    $post_redirect = preg_replace('/.*app\//', '/', $post_redirect); // trim /app prefix
+                    $this->login_session->start_authenticated($username);
+                    redirect($post_redirect);
+                } else {
+                    $this->form_validation->set_error('code', lang('two_factor_auth_verification_code_invalid'));
+                }
+            } else if ($this->input->post('resend')) {
+                $this->two_factor_auth->get_verification_code($username, TRUE);
+                $this->form_validation->set_error('code', lang('two_factor_auth_verification_code_resent'));
+            }
+        } catch (Engine_Exception $e) {
+            $data['errmsg'] = clearos_exception_message($e);
+        }
+        $this->page->view_form('two_factor_auth/verify', $data, lang('two_factor_auth_two_factor_auth'), $page);
+    }
+
 }

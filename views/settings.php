@@ -64,6 +64,9 @@ if ($form_type == 'edit') {
 echo field_toggle_enable_disable('root_enabled', $root_enabled, lang('two_factor_auth_enable_root'), $read_only);
 echo field_input('root_email', $root_email, lang('two_factor_auth_root_email'), $read_only);
 //echo field_toggle_enable_disable('allow_email', $allow_email, lang('two_factor_auth_allow_email_change'), $read_only);
+echo field_dropdown('code_length', $code_length_options, $code_length, lang('two_factor_auth_verification_code_length'), $read_only);
+echo field_dropdown('code_expire', $code_expire_options, $code_expire, lang('two_factor_auth_verification_code_expire'), $read_only);
+echo field_dropdown('token_expire', $token_expire_options, $token_expire, lang('two_factor_auth_token_expire'), $read_only);
 echo field_button_set($buttons);
 
 ///////////////////////////////////////////////////////////////////////////////

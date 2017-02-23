@@ -39,6 +39,8 @@ This package provides the core API and libraries.
 mkdir -p -m 755 %{buildroot}/usr/clearos/apps/two_factor_auth
 cp -r * %{buildroot}/usr/clearos/apps/two_factor_auth/
 
+install -d -m 0750 %{buildroot}/var/clearos/framework/cache/t
+install -D -m 0644 packaging/app-two-factor-auth.cron %{buildroot}/etc/cron.d/app-two-factor-auth
 install -D -m 0640 packaging/two_factor_auth.conf %{buildroot}/etc/clearos/two_factor_auth.conf
 
 %post
@@ -78,7 +80,9 @@ exit 0
 %defattr(-,root,root)
 %exclude /usr/clearos/apps/two_factor_auth/packaging
 %dir /usr/clearos/apps/two_factor_auth
+%dir %attr(0750,webconfig,webconfig) /var/clearos/framework/cache/t
 /usr/clearos/apps/two_factor_auth/deploy
 /usr/clearos/apps/two_factor_auth/language
 /usr/clearos/apps/two_factor_auth/libraries
+%config(noreplace) /etc/cron.d/app-two-factor-auth
 %config(noreplace) /etc/clearos/two_factor_auth.conf

@@ -1,0 +1,109 @@
+#!/usr/clearos/sandbox/usr/bin/php
+<?php
+
+/**
+ * Two Factor Authentication for Webconfig.
+ *
+ * @category   apps
+ * @package    two-factor-auth
+ * @subpackage scripts
+ * @author     eGloo <team@egloo.ca>
+ * @copyright  2017 Avantech
+ * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
+ * @link       http://www.clearfoundation.com/docs/developer/apps/two_factor_auth/
+ */
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+// B O O T S T R A P
+///////////////////////////////////////////////////////////////////////////////
+
+$bootstrap = getenv('CLEAROS_BOOTSTRAP') ? getenv('CLEAROS_BOOTSTRAP') : '/usr/clearos/framework/shared';
+require_once $bootstrap . '/bootstrap.php';
+
+///////////////////////////////////////////////////////////////////////////////
+// D E P E N D E N C I E S
+///////////////////////////////////////////////////////////////////////////////
+
+// Classes
+//--------
+
+use \clearos\apps\two_factor_auth\Two_Factor_Auth as Two_Factor_Auth;
+use \clearos\apps\base\Script as Script;
+
+clearos_load_library('two_factor_auth/Two_Factor_Auth');
+clearos_load_library('base/Script');
+
+// Exceptions
+//-----------
+
+use \Exception as Exception;
+
+///////////////////////////////////////////////////////////////////////////////
+// M A I N
+///////////////////////////////////////////////////////////////////////////////
+
+//--------------------------------------------------------------------
+// Command line options
+//--------------------------------------------------------------------
+
+$short_options  = '';
+
+// Common
+$short_options .= 'h';   // Help
+
+$helpopts  = '
+  Common Options
+  --------------
+  -h: help
+';
+
+// Handle command line options
+//----------------------------
+
+$options = getopt($short_options);
+
+$script = new Script();
+$two_factor_auth = new Two_Factor_Auth();
+
+$help = isset($options['h']) ? TRUE : FALSE;
+
+if ($help) {
+    echo "usage: " . $argv[0] . " [options]\n";
+    echo $helpopts;
+    exit(0);
+}
+
+// Initialize status
+try {
+    if ($script->lock() !== TRUE) {
+        echo "There is a previous process already running.\n";
+        exit(0);
+    }
+
+    $two_factor_auth->recycle_tokens();
+    
+    $script->unlock();
+    echo "Tokens recycled.\n";
+} catch (Exception $e) {
+    echo clearos_exception_message($e);
+    $script->unlock();
+}
+
+// vim: syntax=php
