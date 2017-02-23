@@ -23,6 +23,7 @@ Group: ClearOS/Libraries
 Requires: app-base-core
 Requires: app-openldap-directory-core
 Requires: app-users
+Requires: app-base >= 1:2.3.30
 Requires: app-two-factor-auth-extension-core
 Requires: app-mail
 
