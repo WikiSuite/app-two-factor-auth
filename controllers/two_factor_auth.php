@@ -104,6 +104,12 @@ class Two_Factor_Auth extends ClearOS_Controller
             return;
         }
 
+        // Redirect to safe page if logged in already
+        if ($this->login_session->is_authenticated()) {
+            redirect('base');
+            return;
+        }
+
         // Protect two-factor authentication page
         if (!$this->two_factor_auth->is_ready_2fa_verification())
             redirect('base/session/login');
