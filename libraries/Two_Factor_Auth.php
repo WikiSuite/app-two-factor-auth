@@ -100,7 +100,7 @@ class Two_Factor_Auth extends Engine
 
     const FILE_CONFIG = '/etc/clearos/two_factor_auth.conf';
     const FILE_2FA_CODE = '.2fa';
-    const FOLDER_TOKENS = '/var/clearos/framework/cache/t';
+    const FOLDER_TOKENS = '/var/clearos/framework/tmp/t';
     const COOKIE_NAME = '2FA';
     const DEFAULT_VERIFICATION_CODE_SIZE = 5;
     const DEFAULT_VERIFICATION_CODE_LIFECYCLE = 300;
