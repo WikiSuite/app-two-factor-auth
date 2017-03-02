@@ -516,7 +516,6 @@ class Two_Factor_Auth extends Engine
             $token = bin2hex(openssl_random_pseudo_bytes(24)); 
             $file = new File(self::FOLDER_TOKENS . "/$token", TRUE);
             $file->create('webconfig', 'webconfig', '0600');
-            $file->add_lines($username . "\n");
             $cookie = array(
                 'name'   => self::COOKIE_NAME,
                 'value'  => $token,
