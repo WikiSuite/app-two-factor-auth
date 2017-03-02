@@ -39,6 +39,7 @@ $app['core_requires'] = array(
 );
 
 $app['core_file_manifest'] = array( 
+    'public.acl' => array('target' => '/var/clearos/base/access_control/public/two_factor_auth'),
     'two_factor_auth.conf' => array(
         'target' => '/etc/clearos/two_factor_auth.conf',
         'mode' => '0640',
