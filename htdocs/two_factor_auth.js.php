@@ -29,6 +29,7 @@ var lang_select_all = '<?php echo lang('base_select_all'); ?>';
 var lang_select_none = '<?php echo lang('base_select_none'); ?>';
 
 $(document).ready(function() {
+    $('#code').select();
     $('#2fa_toggle').on('click', function(event) {
         event.preventDefault();
         toggle_users();
