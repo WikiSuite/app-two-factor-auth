@@ -1,7 +1,7 @@
 
 Name: app-two-factor-auth
 Epoch: 1
-Version: 2.3.0
+Version: 2.3.1
 Release: 1%{dist}
 Summary: 2FA for Webconfig
 License: GPLv3
