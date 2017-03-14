@@ -32,7 +32,7 @@ $app['subcategory'] = lang('base_subcategory_accounts');
 $app['core_requires'] = array(
     'app-openldap-directory-core',
     'app-users',
-    'app-base >= 1:2.3.30',
+    'app-base >= 1:2.3.31',
     'app-two-factor-auth-extension-core',
     /*'app-user-two-factor-auth',*/
     'app-mail',
