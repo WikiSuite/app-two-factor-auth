@@ -1,13 +1,13 @@
 
 Name: app-two-factor-auth
 Epoch: 1
-Version: 2.3.2
+Version: 2.3.3
 Release: 1%{dist}
 Summary: 2FA for Webconfig
 License: GPLv3
 Group: ClearOS/Apps
 Packager: eGloo
-Vendor: Avantech
+Vendor: WikiSuite
 Source: %{name}-%{version}.tar.gz
 Buildarch: noarch
 Requires: %{name}-core = 1:%{version}-%{release}
