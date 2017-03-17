@@ -512,7 +512,7 @@ class Two_Factor_Auth extends Engine
             // Make sure folder exists
             $folder = new Folder(self::FOLDER_TOKENS, TRUE);
             if (!$folder->exists())
-                $folder->create('webbconfig', 'webconfig', '0750');
+                $folder->create('webconfig', 'webconfig', '0750');
             $token = bin2hex(openssl_random_pseudo_bytes(24)); 
             $file = new File(self::FOLDER_TOKENS . "/$token", TRUE);
             $file->create('webconfig', 'webconfig', '0600');

@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 $app['basename'] = 'two_factor_auth';
-$app['version'] = '2.3.1';
+$app['version'] = '2.3.2';
 $app['release'] = '1';
 $app['vendor'] = 'Avantech';
 $app['packager'] = 'eGloo';
