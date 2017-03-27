@@ -130,7 +130,7 @@ class Two_Factor_Auth extends ClearOS_Controller
 
         try {
             if ($this->input->post('verify') && $form_ok) {
-                $code = $this->two_factor_auth->get_verification_code($username);
+                $code = $this->two_factor_auth->get_verification_code($username, FALSE, FALSE);
                 if ($this->input->post('code') == $code) {
                     if ($this->input->post('redirect'))
                         $redirect = $this->input->post('redirect');
@@ -143,10 +143,10 @@ class Two_Factor_Auth extends ClearOS_Controller
                     $this->form_validation->set_error('code', lang('two_factor_auth_verification_code_invalid'));
                 }
             } else if ($this->input->post('resend')) {
-                $this->two_factor_auth->get_verification_code($username, TRUE);
+                $this->two_factor_auth->get_verification_code($username, TRUE, FALSE, FALSE);
                 $this->form_validation->set_error('code', lang('two_factor_auth_verification_code_resent'));
             }
-        } catch (Engine_Exception $e) {
+        } catch (Exception $e) {
             $data['errmsg'] = clearos_exception_message($e);
         }
         $this->page->view_form('two_factor_auth/verify', $data, lang('two_factor_auth_two_factor_auth'), $page);

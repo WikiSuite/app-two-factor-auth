@@ -72,8 +72,10 @@ clearos_load_library('users/User_Manager_Factory');
 //-----------
 
 use \Exception as Exception;
+use \clearos\apps\base\Engine_Exception as Engine_Exception;
 use \clearos\apps\base\Validation_Exception as Validation_Exception;
 
+clearos_load_library('base/Engine_Exception');
 clearos_load_library('base/Validation_Exception');
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -410,14 +412,15 @@ class Two_Factor_Auth extends Engine
     /**
      * Returns 2-factor verification code.
      *
-     * @param string  $username username
-     * @param boolean $resend   force resend
+     * @param string  $username       username
+     * @param boolean $resend         force resend
+     * @param boolean $suppress_error do not display errors coming from library
      *
      * @return string code
      * @throws Engine_Exception
      */
 
-    public function get_verification_code($username, $resend = FALSE)
+    public function get_verification_code($username, $resend = FALSE, $supress_error = TRUE)
     {
         clearos_profile(__METHOD__, __LINE__);
         try {
@@ -438,7 +441,9 @@ class Two_Factor_Auth extends Engine
             $this->_send_verification_code($username, $code);
             return $code;
         } catch (Engine_Exception $e) {
-            throw new Engine_Exception($e->get_message());
+            clearos_log('app-two-factor-auth::get_verification_code', clearos_exception_message($e));
+            if (!$supress_error)
+                throw new Engine_Exception(lang('two_factor_auth_send_failed'));
         }
     }
 
@@ -721,23 +726,27 @@ class Two_Factor_Auth extends Engine
         $subject = lang('two_factor_auth_verification_code');
         $body = lang('two_factor_auth_verification_code') . ":  $code\n";
 
-        $email = NULL;
+        try {
+            $email = NULL;
 
-        if ($username == 'root') {
-            $email = $this->get_root_email();
-        } else {
-            $user = User_Factory::create($username);
-            $extensions = $user->get_info()['extensions'];
-            $email = $extensions['two_factor_auth']['mail'];
+            if ($username == 'root') {
+                $email = $this->get_root_email();
+            } else {
+                $user = User_Factory::create($username);
+                $extensions = $user->get_info()['extensions'];
+                $email = $extensions['two_factor_auth']['mail'];
+            }
+
+            if (!$email)
+                throw new Engine_Exception(lang('two_factor_auth_not_configured'));
+            $mailer->add_recipient($email);
+            $mailer->set_message_subject($subject);
+            $mailer->set_message_html_body($body);
+
+            $mailer->send();
+        } catch (Exception $e) {
+            throw new Engine_Exception($e->getMessage());
         }
-
-        if (!$email)
-            throw new Engine_Exception(lang('two_factor_auth_not_configured'));
-        $mailer->add_recipient($email);
-        $mailer->set_message_subject($subject);
-        $mailer->set_message_html_body($body);
-
-        $mailer->send();
     }
 
     ///////////////////////////////////////////////////////////////////////////////

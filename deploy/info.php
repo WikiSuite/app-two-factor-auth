@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 $app['basename'] = 'two_factor_auth';
-$app['version'] = '2.3.3';
+$app['version'] = '2.3.4';
 $app['release'] = '1';
 $app['vendor'] = 'WikiSuite';
 $app['packager'] = 'eGloo';

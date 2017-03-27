@@ -26,3 +26,4 @@ $lang['two_factor_auth_verification_code_invalid'] = 'Invalid verification code'
 $lang['two_factor_auth_verification_code_length'] = 'Verification Code Size';
 $lang['two_factor_auth_verification_code_resent'] = 'Verification code resent to e-mail.';
 $lang['two_factor_auth_verify_code_and_continue'] = 'Verify Code and Continue';
+$lang['two_factor_auth_send_failed'] = 'Unable to send verification code - contact your administrator';
