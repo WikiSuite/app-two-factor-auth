@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 $app['basename'] = 'two_factor_auth';
-$app['version'] = '2.3.5';
+$app['version'] = '2.3.6';
 $app['release'] = '1';
 $app['vendor'] = 'WikiSuite';
 $app['packager'] = 'eGloo';
@@ -43,8 +43,8 @@ $app['core_file_manifest'] = array(
     'two_factor_reverse_proxy.inc' => array(
         'target' => '/usr/clearos/sandbox/etc/httpd/conf.d/two_factor_auth.inc',
         'mode' => '0644',
-        'owner' => 'webconfig',
-        'group' => 'webconfig',
+        'owner' => 'root',
+        'group' => 'root',
     ),
     'two_factor_auth.conf' => array(
         'target' => '/etc/clearos/two_factor_auth.conf',

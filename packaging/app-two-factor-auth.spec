@@ -1,7 +1,7 @@
 
 Name: app-two-factor-auth
 Epoch: 1
-Version: 2.3.5
+Version: 2.3.6
 Release: 1%{dist}
 Summary: 2FA for Webconfig
 License: GPLv3
@@ -91,4 +91,4 @@ exit 0
 %config(noreplace) /etc/cron.d/app-two-factor-auth
 /var/clearos/base/access_control/public/two_factor_auth
 %config(noreplace) /etc/clearos/two_factor_auth.conf
-%attr(0644,webconfig,webconfig) /usr/clearos/sandbox/etc/httpd/conf.d/two_factor_auth.inc
+/usr/clearos/sandbox/etc/httpd/conf.d/two_factor_auth.inc
