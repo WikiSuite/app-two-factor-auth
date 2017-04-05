@@ -1,7 +1,7 @@
 
 Name: app-two-factor-auth
 Epoch: 1
-Version: 2.3.4
+Version: 2.3.5
 Release: 1%{dist}
 Summary: 2FA for Webconfig
 License: GPLv3
@@ -44,6 +44,7 @@ install -d -m 0750 %{buildroot}/var/clearos/framework/cache/t
 install -D -m 0644 packaging/app-two-factor-auth.cron %{buildroot}/etc/cron.d/app-two-factor-auth
 install -D -m 0644 packaging/public.acl %{buildroot}/var/clearos/base/access_control/public/two_factor_auth
 install -D -m 0640 packaging/two_factor_auth.conf %{buildroot}/etc/clearos/two_factor_auth.conf
+install -D -m 0644 packaging/two_factor_reverse_proxy.inc %{buildroot}/usr/clearos/sandbox/etc/httpd/conf.d/two_factor_auth.inc
 
 %post
 logger -p local6.notice -t installer 'app-two-factor-auth - installing'
@@ -90,3 +91,4 @@ exit 0
 %config(noreplace) /etc/cron.d/app-two-factor-auth
 /var/clearos/base/access_control/public/two_factor_auth
 %config(noreplace) /etc/clearos/two_factor_auth.conf
+%attr(0644,webconfig,webconfig) /usr/clearos/sandbox/etc/httpd/conf.d/two_factor_auth.inc
