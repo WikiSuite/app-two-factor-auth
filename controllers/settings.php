@@ -102,6 +102,7 @@ class Settings extends ClearOS_Controller
         $this->form_validation->set_policy('root_enabled', 'two_factor_auth/Two_Factor_Auth', 'validate_root_enabled', TRUE);
         $this->form_validation->set_policy('root_email', 'two_factor_auth/Two_Factor_Auth', 'validate_email', FALSE);
         //$this->form_validation->set_policy('allow_email', 'two_factor_auth/Two_Factor_Auth', 'validate_email_allow_change', TRUE);
+        $this->form_validation->set_policy('ssh', 'two_factor_auth/Two_Factor_Auth', 'validate_require_ssh', TRUE);
         $form_ok = $this->form_validation->run();
 
         // Extra Validation
@@ -124,6 +125,7 @@ class Settings extends ClearOS_Controller
                 $this->two_factor_auth->set_verification_code_lifecycle($this->input->post('code_expire'));
                 $this->two_factor_auth->set_token_lifecycle($this->input->post('token_expire'));
                 //$this->two_factor_auth->set_email_allow_change($this->input->post('allow_email'));
+                $this->two_factor_auth->set_require_ssh($this->input->post('ssh'));
 
                 $this->page->set_status_updated();
                 redirect('/two_factor_auth');
@@ -145,6 +147,7 @@ class Settings extends ClearOS_Controller
             $data['code_expire'] = $this->two_factor_auth->get_verification_code_lifecycle();
             $data['token_expire_options'] = $this->two_factor_auth->get_token_lifecycle_options();
             $data['token_expire'] = $this->two_factor_auth->get_token_lifecycle();
+            $data['ssh'] = $this->two_factor_auth->get_require_ssh();
         } catch (Exception $e) {
             $this->page->view_exception($e);
             return;

@@ -67,6 +67,7 @@ echo field_input('root_email', $root_email, lang('two_factor_auth_root_email'), 
 echo field_dropdown('code_length', $code_length_options, $code_length, lang('two_factor_auth_verification_code_length'), $read_only);
 echo field_dropdown('code_expire', $code_expire_options, $code_expire, lang('two_factor_auth_verification_code_expire'), $read_only);
 echo field_dropdown('token_expire', $token_expire_options, $token_expire, lang('two_factor_auth_token_expire'), $read_only);
+echo field_toggle_enable_disable('ssh', $ssh, lang('two_factor_auth_ssh'), $read_only);
 echo field_button_set($buttons);
 
 ///////////////////////////////////////////////////////////////////////////////

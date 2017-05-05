@@ -102,6 +102,7 @@ class Two_Factor_Auth extends Engine
 
     const FILE_CONFIG = '/etc/clearos/two_factor_auth.conf';
     const FILE_2FA_CODE = '.2fa';
+    const FILE_API_KEY = '/var/clearos/two_factor_auth/api.key';
     const FOLDER_TOKENS = '/var/clearos/framework/tmp/t';
     const COOKIE_NAME = '2FA';
     const DEFAULT_VERIFICATION_CODE_SIZE = 5;
@@ -139,9 +140,9 @@ class Two_Factor_Auth extends Engine
         clearos_profile(__METHOD__, __LINE__);
 
         if ($enabled === 'on' || $enabled == 1 || $enabled == TRUE)
-            $enabled = TRUE;
+            $enabled = 1;
         else
-            $enabled = FALSE;
+            $enabled = 0;
 
         Validation_Exception::is_valid($this->validate_email_allow_change($enabled));
 
@@ -241,6 +242,29 @@ class Two_Factor_Auth extends Engine
         Validation_Exception::is_valid($this->validate_token_lifecycle($lifecycle));
 
         $this->_set_parameter('token_lifecycle', $lifecycle);
+    }
+
+    /**
+     * Sets require SSH.
+     *
+     * @param Boolean $required
+     *
+     * @return void
+     * @throws Engine_Exception, Validation_Exception
+     */
+
+    public function set_require_ssh($require)
+    {
+        clearos_profile(__METHOD__, __LINE__);
+
+        if ($require === 'on' || $require == 1 || $require == TRUE)
+            $require = 1;
+        else
+            $require = 0;
+
+        Validation_Exception::is_valid($this->validate_require_ssh($require));
+
+        $this->_set_parameter('require_ssh', $require);
     }
 
     /**
@@ -385,6 +409,23 @@ class Two_Factor_Auth extends Engine
     }
 
     /**
+     * Returns the require SSH setting.
+     *
+     * @return boolean
+     * @throws Engine_Exception
+     */
+
+    public function get_require_ssh()
+    {
+        clearos_profile(__METHOD__, __LINE__);
+
+        if (!$this->is_loaded)
+            $this->_load_config();
+
+        return $this->config['require_ssh'];
+    }
+
+    /**
      * Check if user been verified with 2FA.
      *
      * @return boolean
@@ -424,21 +465,33 @@ class Two_Factor_Auth extends Engine
     {
         clearos_profile(__METHOD__, __LINE__);
         try {
+            if ($username == 'root' && $this->get_root_enabled()) {
+                $email = $this->get_root_email();
+            } else if ($username != 'root') {
+                $user = User_Factory::create($username);
+                $extensions = $user->get_info()['extensions'];
+                if ($extensions['two_factor_auth']['state'])
+                    $email = $extensions['two_factor_auth']['mail'];
+                else
+                    return;
+            } else {
+                return;
+            }
             $file = new File(CLEAROS_TEMP_DIR . "/" . self::FILE_2FA_CODE . ".$username", TRUE);
 
             if ($file->exists() && $file->last_modified() && (time() - $file->last_modified() < $this->get_verification_code_lifecycle())) {
                 $code = $file->get_contents();
                 if ($resend)
-                    $this->_send_verification_code($username, $code);
+                    $this->_send_verification_code($username, $code, $email);
                 return $code;
             } else if ($file->exists()) {
                 $file->delete();
             }
 
-            $file->create('root', 'root', '0600');
+            $file->create($username, 'root', '0600');
             $code = $this->_create_verification_code();
             $file->add_lines($code . "\n");
-            $this->_send_verification_code($username, $code);
+            $this->_send_verification_code($username, $code, $email);
             return $code;
         } catch (Engine_Exception $e) {
             clearos_log('app-two-factor-auth::get_verification_code', clearos_exception_message($e));
@@ -570,6 +623,66 @@ class Two_Factor_Auth extends Engine
     }
 
     /**
+     * Get API key.
+     *
+     * @return boolean
+     */
+
+    public function get_api_key()
+    {
+        clearos_profile(__METHOD__, __LINE__);
+        $file = new File(self::FILE_API_KEY);
+        return $file->get_contents();
+    }
+
+    /**
+     * API hook.
+     * 
+     * @return boolean
+     */
+
+    public function api($action, $params = NULL)
+    {
+        clearos_profile(__METHOD__, __LINE__);
+
+        $url = "https://127.0.0.1:1501/app/two_factor_auth/api/" . $action . "/" . $params['username'];
+        $header_data = array(
+            "Content-Type: application/json",
+            "Accept: application/json",
+            "X-api-key: " . $this->get_api_key(),
+        );
+        // TODO - CodeIgnighter defaults for CSRF and GET are borked!...Really Borked.
+//        if ($params != NULL && is_array($params))
+ //           $url .= "/" . http_build_query($params);
+
+        $ch = curl_init();
+
+        // Set main curl options
+        //----------------------
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header_data);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+        curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+
+        $curl_response = chop(curl_exec($ch));
+        $error = curl_error($ch);
+        $errno = curl_errno($ch);
+        curl_close($ch);
+
+        // Return useful errno messages for the most common errnos
+        //--------------------------------------------------------
+
+        if ($errno != 0)
+            throw new Engine_Exception($error, CLEAROS_INFO);
+
+        return json_decode($curl_response);
+    }
+
+    /**
      * Create unique verification code.
      *
      * @return String
@@ -654,10 +767,10 @@ class Two_Factor_Auth extends Engine
      * @return void
      */
 
-    function logout_cleanup($username)
+    function logout_cleanup($username, $as_privileged = TRUE)
     {
         clearos_profile(__METHOD__, __LINE__);
-        $file = new File(CLEAROS_TEMP_DIR . "/" . self::FILE_2FA_CODE . ".$username", TRUE);
+        $file = new File(CLEAROS_TEMP_DIR . "/" . self::FILE_2FA_CODE . ".$username", $as_privileged);
         if ($file->exists())
             $file->delete();
     }
@@ -718,7 +831,7 @@ class Two_Factor_Auth extends Engine
      * @throws Engine_Exception
      */
 
-    protected function _send_verification_code($username, $code)
+    protected function _send_verification_code($username, $code, $email)
     {
         clearos_profile(__METHOD__, __LINE__);
 
@@ -726,19 +839,11 @@ class Two_Factor_Auth extends Engine
         $subject = lang('two_factor_auth_verification_code');
         $body = lang('two_factor_auth_verification_code') . ":  $code\n";
 
+        if (!$email)
+            throw new Engine_Exception(lang('two_factor_auth_not_configured'));
+
         try {
-            $email = NULL;
 
-            if ($username == 'root') {
-                $email = $this->get_root_email();
-            } else {
-                $user = User_Factory::create($username);
-                $extensions = $user->get_info()['extensions'];
-                $email = $extensions['two_factor_auth']['mail'];
-            }
-
-            if (!$email)
-                throw new Engine_Exception(lang('two_factor_auth_not_configured'));
             $mailer->add_recipient($email);
             $mailer->set_message_subject($subject);
             $mailer->set_message_html_body($body);
@@ -873,5 +978,18 @@ class Two_Factor_Auth extends Engine
 
         if (! preg_match("/^([a-zA-Z0-9]+)$/", $token))
             return lang('two_factor_auth_token_invalid');
+    }
+
+    /**
+     * Validation routine require SSH.
+     *
+     * @param boolean require status
+     *
+     * @return string error message if require_ssh invalid
+     */
+
+    public function validate_require_ssh($require)
+    {
+        clearos_profile(__METHOD__, __LINE__);
     }
 }

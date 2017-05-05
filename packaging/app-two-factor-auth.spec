@@ -1,7 +1,7 @@
 
 Name: app-two-factor-auth
 Epoch: 1
-Version: 2.3.8
+Version: 2.3.10
 Release: 1%{dist}
 Summary: 2FA for Webconfig
 License: GPLv3
@@ -41,7 +41,9 @@ mkdir -p -m 755 %{buildroot}/usr/clearos/apps/two_factor_auth
 cp -r * %{buildroot}/usr/clearos/apps/two_factor_auth/
 
 install -d -m 0750 %{buildroot}/var/clearos/framework/cache/t
+install -d -m 0755 %{buildroot}/var/clearos/two_factor_auth
 install -D -m 0644 packaging/app-two-factor-auth.cron %{buildroot}/etc/cron.d/app-two-factor-auth
+install -D -m 0640 packaging/clearos_2fa.sh %{buildroot}/etc/profile.d/clearos_2fa.sh
 install -D -m 0644 packaging/public.acl %{buildroot}/var/clearos/base/access_control/public/two_factor_auth
 install -D -m 0640 packaging/two_factor_auth.conf %{buildroot}/etc/clearos/two_factor_auth.conf
 install -D -m 0644 packaging/two_factor_reverse_proxy.inc %{buildroot}/usr/clearos/sandbox/etc/httpd/conf.d/two_factor_auth.inc
@@ -85,10 +87,12 @@ exit 0
 %exclude /usr/clearos/apps/two_factor_auth/unify.json
 %dir /usr/clearos/apps/two_factor_auth
 %dir %attr(0750,webconfig,webconfig) /var/clearos/framework/cache/t
+%dir %attr(0755,webconfig,webconfig) /var/clearos/two_factor_auth
 /usr/clearos/apps/two_factor_auth/deploy
 /usr/clearos/apps/two_factor_auth/language
 /usr/clearos/apps/two_factor_auth/libraries
 %config(noreplace) /etc/cron.d/app-two-factor-auth
+/etc/profile.d/clearos_2fa.sh
 /var/clearos/base/access_control/public/two_factor_auth
 %config(noreplace) /etc/clearos/two_factor_auth.conf
 /usr/clearos/sandbox/etc/httpd/conf.d/two_factor_auth.inc

@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 $app['basename'] = 'two_factor_auth';
-$app['version'] = '2.3.8';
+$app['version'] = '2.3.10';
 $app['release'] = '1';
 $app['vendor'] = 'WikiSuite';
 $app['packager'] = 'eGloo';
@@ -34,7 +34,6 @@ $app['core_requires'] = array(
     'app-users',
     'app-base >= 1:2.3.31',
     'app-two-factor-auth-extension-core',
-    /*'app-user-two-factor-auth',*/
     'app-mail',
 );
 
@@ -59,10 +58,21 @@ $app['core_file_manifest'] = array(
         'config' => TRUE,
         'config_params' => 'noreplace',
     ),
+    'clearos_2fa.sh' => array(
+        'target' => '/etc/profile.d/clearos_2fa.sh',
+        'mode' => '0640',
+        'owner' => 'root',
+        'group' => 'root',
+    ),
 );
 $app['core_directory_manifest'] = array(
     '/var/clearos/framework/cache/t' => array(
         'mode' => '0750',
+        'owner' => 'webconfig',
+        'group' => 'webconfig',
+    ),
+    '/var/clearos/two_factor_auth' => array(
+        'mode' => '0755',
         'owner' => 'webconfig',
         'group' => 'webconfig',
     ),
@@ -71,5 +81,4 @@ $app['core_directory_manifest'] = array(
 $app['delete_dependency'] = array(
     'app-two-factor-auth-core',
     'app-two-factor-auth-extension',
-    /*'app-user-two-factor-auth',*/
 );

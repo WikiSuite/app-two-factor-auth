@@ -1,0 +1,5 @@
+#!/bin/sh
+
+uuidgen > /var/clearos/two_factor_auth/api.key
+chmod 644 /var/clearos/two_factor_auth/api.key
+exit 0

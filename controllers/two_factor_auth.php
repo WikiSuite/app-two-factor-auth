@@ -152,4 +152,37 @@ class Two_Factor_Auth extends ClearOS_Controller
         $this->page->view_form('two_factor_auth/verify', $data, lang('two_factor_auth_two_factor_auth'), $page);
     }
 
+    /**
+     * Two-factor Authentication API.
+     *
+     *
+     * @return view
+     */
+
+    function api($action, $username)
+    {
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
+        try {
+
+            $this->load->library('two_factor_auth/Two_Factor_Auth');
+            $this->lang->load('base');
+
+            if ($this->input->get_request_header("X-api-key") != $this->two_factor_auth->get_api_key())
+                throw new Exception (lang('base_access_denied'), 1);
+
+            if ($this->input->ip_address() != "127.0.0.1")
+                throw new Exception (lang('base_access_denied'), 1);
+
+            if ($action == 'ssh_login') {
+                $this->two_factor_auth->get_verification_code($username, TRUE, FALSE);;
+                echo json_encode(array('code' => 0));
+                return;
+            }
+
+            throw new Exception (lang('base_access_denied'), 1);
+        } catch (Exception $e) {
+            echo json_encode(Array('code' => clearos_exception_code($e), 'errmsg' => clearos_exception_message($e)));
+        }
+    }
 }
