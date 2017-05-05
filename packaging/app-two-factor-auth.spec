@@ -1,9 +1,9 @@
 
 Name: app-two-factor-auth
 Epoch: 1
-Version: 2.3.10
+Version: 2.3.11
 Release: 1%{dist}
-Summary: 2FA for Webconfig
+Summary: 2FA for Webconfig and SSH
 License: GPLv3
 Group: ClearOS/Apps
 Packager: eGloo
@@ -14,10 +14,10 @@ Requires: %{name}-core = 1:%{version}-%{release}
 Requires: app-base
 
 %description
-Allows administrators to enforce two-factor authentication for Webconfig.  If enabled, a user will be sent an email containing an expiring token that must be provided in addition to a username/password combination to complete the login process.
+Allows administrators to enforce two-factor authentication for Webconfig and SSH logins.  If enabled, a user will be sent an email containing an expiring One Time Password (OTP) that must be verified in addition to a username/password combination to complete the login process.
 
 %package core
-Summary: 2FA for Webconfig - Core
+Summary: 2FA for Webconfig and SSH - Core
 License: LGPLv3
 Group: ClearOS/Libraries
 Requires: app-base-core
@@ -28,7 +28,7 @@ Requires: app-two-factor-auth-extension-core
 Requires: app-mail
 
 %description core
-Allows administrators to enforce two-factor authentication for Webconfig.  If enabled, a user will be sent an email containing an expiring token that must be provided in addition to a username/password combination to complete the login process.
+Allows administrators to enforce two-factor authentication for Webconfig and SSH logins.  If enabled, a user will be sent an email containing an expiring One Time Password (OTP) that must be verified in addition to a username/password combination to complete the login process.
 
 This package provides the core API and libraries.
 

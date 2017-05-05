@@ -645,7 +645,7 @@ class Two_Factor_Auth extends Engine
     {
         clearos_profile(__METHOD__, __LINE__);
 
-        $url = "https://127.0.0.1:1501/app/two_factor_auth/api/" . $action . "/" . $params['username'];
+        $url = "https://127.0.0.1:81/app/two_factor_auth/api/" . $action . "/" . $params['username'];
         $header_data = array(
             "Content-Type: application/json",
             "Accept: application/json",

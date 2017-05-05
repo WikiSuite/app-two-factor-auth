@@ -61,6 +61,16 @@ class Two_Factor_Auth extends ClearOS_Controller
         $this->lang->load('two_factor_auth');
         $this->load->library('two_factor_auth/Two_Factor_Auth');
 
+        // Show account status widget if we're not in a happy state
+        //---------------------------------------------------------
+
+        $this->load->module('accounts/status');
+
+        if ($this->status->unhappy()) {
+            $this->status->widget('users');
+            return;
+        }
+
         // Load views
         //-----------
 
