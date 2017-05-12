@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 $app['basename'] = 'two_factor_auth';
-$app['version'] = '2.3.11';
+$app['version'] = '2.3.12';
 $app['release'] = '1';
 $app['vendor'] = 'WikiSuite';
 $app['packager'] = 'eGloo';
@@ -57,12 +57,6 @@ $app['core_file_manifest'] = array(
         'target' => '/etc/cron.d/app-two-factor-auth',
         'config' => TRUE,
         'config_params' => 'noreplace',
-    ),
-    'clearos_2fa.sh' => array(
-        'target' => '/etc/profile.d/clearos_2fa.sh',
-        'mode' => '0640',
-        'owner' => 'root',
-        'group' => 'root',
     ),
 );
 $app['core_directory_manifest'] = array(

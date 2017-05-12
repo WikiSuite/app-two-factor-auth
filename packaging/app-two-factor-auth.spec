@@ -1,9 +1,9 @@
 
 Name: app-two-factor-auth
 Epoch: 1
-Version: 2.3.11
+Version: 2.3.12
 Release: 1%{dist}
-Summary: 2FA for Webconfig and SSH
+Summary: 2FA for Webconfig
 License: GPLv3
 Group: ClearOS/Apps
 Packager: eGloo
@@ -14,10 +14,10 @@ Requires: %{name}-core = 1:%{version}-%{release}
 Requires: app-base
 
 %description
-Allows administrators to enforce two-factor authentication for Webconfig and SSH logins.  If enabled, a user will be sent an email containing an expiring One Time Password (OTP) that must be verified in addition to a username/password combination to complete the login process.
+Allows administrators to enforce two-factor authentication for Webconfig.  If enabled, a user will be sent an email containing an expiring One Time Password (OTP) that must be verified in addition to a username/password combination to complete the login process.
 
 %package core
-Summary: 2FA for Webconfig and SSH - Core
+Summary: 2FA for Webconfig - Core
 License: LGPLv3
 Group: ClearOS/Libraries
 Requires: app-base-core
@@ -28,7 +28,7 @@ Requires: app-two-factor-auth-extension-core
 Requires: app-mail
 
 %description core
-Allows administrators to enforce two-factor authentication for Webconfig and SSH logins.  If enabled, a user will be sent an email containing an expiring One Time Password (OTP) that must be verified in addition to a username/password combination to complete the login process.
+Allows administrators to enforce two-factor authentication for Webconfig.  If enabled, a user will be sent an email containing an expiring One Time Password (OTP) that must be verified in addition to a username/password combination to complete the login process.
 
 This package provides the core API and libraries.
 
@@ -43,7 +43,6 @@ cp -r * %{buildroot}/usr/clearos/apps/two_factor_auth/
 install -d -m 0750 %{buildroot}/var/clearos/framework/cache/t
 install -d -m 0755 %{buildroot}/var/clearos/two_factor_auth
 install -D -m 0644 packaging/app-two-factor-auth.cron %{buildroot}/etc/cron.d/app-two-factor-auth
-install -D -m 0640 packaging/clearos_2fa.sh %{buildroot}/etc/profile.d/clearos_2fa.sh
 install -D -m 0644 packaging/public.acl %{buildroot}/var/clearos/base/access_control/public/two_factor_auth
 install -D -m 0640 packaging/two_factor_auth.conf %{buildroot}/etc/clearos/two_factor_auth.conf
 install -D -m 0644 packaging/two_factor_reverse_proxy.inc %{buildroot}/usr/clearos/sandbox/etc/httpd/conf.d/two_factor_auth.inc
@@ -92,7 +91,6 @@ exit 0
 /usr/clearos/apps/two_factor_auth/language
 /usr/clearos/apps/two_factor_auth/libraries
 %config(noreplace) /etc/cron.d/app-two-factor-auth
-/etc/profile.d/clearos_2fa.sh
 /var/clearos/base/access_control/public/two_factor_auth
 %config(noreplace) /etc/clearos/two_factor_auth.conf
 /usr/clearos/sandbox/etc/httpd/conf.d/two_factor_auth.inc

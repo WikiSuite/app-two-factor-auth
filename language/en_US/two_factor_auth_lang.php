@@ -1,7 +1,7 @@
 <?php
 $lang['two_factor_auth_allow_email_change'] = 'Allow Users to Modify E-mail';
-$lang['two_factor_auth_app_description'] = 'Allows administrators to enforce two-factor authentication for Webconfig and SSH logins.  If enabled, a user will be sent an email containing an expiring One Time Password (OTP) that must be verified in addition to a username/password combination to complete the login process.';
-$lang['two_factor_auth_app_name'] = '2FA for Webconfig and SSH';
+$lang['two_factor_auth_app_description'] = 'Allows administrators to enforce two-factor authentication for Webconfig.  If enabled, a user will be sent an email containing an expiring One Time Password (OTP) that must be verified in addition to a username/password combination to complete the login process.';
+$lang['two_factor_auth_app_name'] = '2FA for Webconfig';
 $lang['two_factor_auth_cli_prompt'] = 'Two-factor authentication is enabled on this account. A one-time password has been sent to your email. Please enter it below:';
 $lang['two_factor_auth_digits'] = 'digits';
 $lang['two_factor_auth_email'] = 'E-mail';
